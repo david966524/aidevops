@@ -44,7 +44,7 @@ async def get_api_key(api_key: str = Depends(api_key_header)):
 # 路由
 app.include_router(ec2Service.ec2Router, prefix="/ec2Api", tags=["ec2"], dependencies=[Depends(get_api_key)])
 app.include_router(cfService.cfRouter, prefix="/cfApi", tags=["cloudflare"], dependencies=[Depends(get_api_key)])
-app.include_router(elbService.elbRouter, prefix="/elbApi", tags=["elb"]) #, dependencies=[Depends(get_api_key)]
+app.include_router(elbService.elbRouter, prefix="/elbApi", tags=["elb"], dependencies=[Depends(get_api_key)]) #
 
 
 
