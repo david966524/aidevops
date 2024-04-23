@@ -22,7 +22,7 @@ def custom_openapi():
         description="chatgpt",
         routes=app.routes,
     )
-    openapi_schema["servers"] = [{"url": "https://test.davidops.club:8081"}]
+    openapi_schema["servers"] = [{"url": "https://test.davidops.club"}]
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
