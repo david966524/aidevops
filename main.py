@@ -22,7 +22,7 @@ def custom_openapi():
         description="chatgpt",
         routes=app.routes,
     )
-    openapi_schema["servers"] = [{"url": "http://127.0.0.1:8081"}]
+    openapi_schema["servers"] = [{"url": "https://test.davidops.club:8081"}]
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
@@ -65,4 +65,4 @@ app.add_middleware(
 
 
 if __name__ == '__main__':
-    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8081)
+    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=80)
