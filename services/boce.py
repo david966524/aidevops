@@ -47,4 +47,5 @@ async def get_boceInfo(domain: str):
         print(resp.json()["done"])
         if resp.json()["done"] is True:
             return resp.json()["list"]
-        break
+        else:
+            continue
