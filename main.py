@@ -10,6 +10,7 @@ from services import ec2 as ec2Service
 from services import cf as cfService
 from services import awselb as elbService
 from services import boce as boceService
+from services import route53 as r53
 
 app = FastAPI()
 
@@ -47,6 +48,7 @@ app.include_router(ec2Service.ec2Router, prefix="/ec2Api", tags=["ec2"], depende
 app.include_router(cfService.cfRouter, prefix="/cfApi", tags=["cloudflare"], dependencies=[Depends(get_api_key)])
 app.include_router(elbService.elbRouter, prefix="/elbApi", tags=["elb"], dependencies=[Depends(get_api_key)])
 app.include_router(boceService.bcRouter, prefix="/boceApi", tags=["boce"])
+app.include_router(r53.r53Router, prefix="/r53", tags=["router53"])
 
 
 
