@@ -9,6 +9,7 @@ from pydantic import BaseModel, HttpUrl
 from services import ec2 as ec2Service
 from services import cf as cfService
 from services import awselb as elbService
+from services import boce as boceService
 
 app = FastAPI()
 
@@ -23,7 +24,7 @@ def custom_openapi():
         description="chatgpt",
         routes=app.routes,
     )
-    openapi_schema["servers"] = [{"url": "https://test.davidops.club"}]
+    openapi_schema["servers"] = [{"url": "http://127.0.0.1:8000"}]
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
@@ -44,7 +45,8 @@ async def get_api_key(api_key: str = Depends(api_key_header)):
 # 路由
 app.include_router(ec2Service.ec2Router, prefix="/ec2Api", tags=["ec2"], dependencies=[Depends(get_api_key)])
 app.include_router(cfService.cfRouter, prefix="/cfApi", tags=["cloudflare"], dependencies=[Depends(get_api_key)])
-app.include_router(elbService.elbRouter, prefix="/elbApi", tags=["elb"], dependencies=[Depends(get_api_key)]) #
+app.include_router(elbService.elbRouter, prefix="/elbApi", tags=["elb"], dependencies=[Depends(get_api_key)])
+app.include_router(boceService.bcRouter, prefix="/boceApi", tags=["boce"])
 
 
 
