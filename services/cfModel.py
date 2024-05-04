@@ -13,4 +13,4 @@ class CfRecordItem(BaseModel):
     record_name: str = Field(title="Subdomain", description="Subdomain")
     record_content: str = Field(title="recordIp", description="recordIp")
     record_proxied: bool = Field(title="proxied", description="proxied")
-    record_ttl: str = "600"
+    record_ttl: str = "60"
