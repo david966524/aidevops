@@ -1,6 +1,6 @@
 import boto3
 from fastapi import APIRouter
-
+from services.resp import Resp
 from config import settings
 
 elbRouter = APIRouter()
@@ -13,11 +13,12 @@ def get_client(region_name: str):
     return client
 
 
-@elbRouter.get("/getAllElbInfo/{region}")
+@elbRouter.get("/getAllElbInfo/{region}", response_model=Resp, summary="获取elb的信息", description="传入region",
+                operation_id="get_all_elb")
 async def get_all_elb(region: str):
     # 获取所有LoadBalancer的详细信息
     response = get_client(region).describe_load_balancers()
 
     # 提取Load Balancer信息
     load_balancers = response['LoadBalancers']
-    return load_balancers
+    return Resp(HttpCode=200, Data=load_balancers)

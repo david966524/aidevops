@@ -7,7 +7,7 @@ from fastapi.params import Query
 
 from config import settings
 from services.cfModel import CfRecordItem
-
+from services.resp import Resp
 
 def getCfclient():
     return cloudflare.CloudFlare(settings.cloudflare.EMAIL, settings.cloudflare.API_KEY, raw=True)
@@ -17,7 +17,7 @@ cfRouter = APIRouter()
 
 
 @cfRouter.get("/getAllDomain", summary="获取cloudflare中所有的域名", description="获取cloudflare中所有的域名",
-              operation_id="getCloudflareAllDomain")
+              operation_id="getCloudflareAllDomain", response_model=Resp)
 async def get_all_domain():
     try:
         page_number = 0
@@ -36,12 +36,13 @@ async def get_all_domain():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     else:
-        return zoneList
+        return Resp(HttpCode=200, Data=zoneList)
+
 
 
 @cfRouter.get("/addDomain/{domainName}", summary="向cloudflare添加域名，返回的name_servers字段是需要修改的ns地址",
               description="/addDomain/需要添加的域名",
-              operation_id="addCloudflareZone")
+              operation_id="addCloudflareZone", response_model=Resp)
 async def add_domain(domainName: str):
     try:
         zone_data = {'name': domainName}
@@ -49,11 +50,12 @@ async def add_domain(domainName: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     else:
-        return result
+        return Resp(HttpCode=200, Data=result)
+
 
 
 @cfRouter.post("/addRecord", summary="提供zone id，向zone添加域名解析", description="/addRecord",
-               operation_id="addCloudflareZoneRecord")
+               operation_id="addCloudflareZoneRecord", response_model=Resp)
 async def add_records(cfRecordItem: CfRecordItem):
     try:
         print(cfRecordItem)
@@ -69,11 +71,11 @@ async def add_records(cfRecordItem: CfRecordItem):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     else:
-        return dns_record
+        return Resp(HttpCode=200, Data=dns_record)
 
 
 @cfRouter.get("/getRecords/{zoneName}", summary="提供zone name，查询zone解析", description="/getRecords/{zoneName}",
-              operation_id="queryZoneRecord")
+              operation_id="queryZoneRecord", response_model=Resp)
 async def getRecord_zone(zoneName: str):
     try:
         raw_results = getCfclient().zones.get()
@@ -93,11 +95,11 @@ async def getRecord_zone(zoneName: str):
     else:
         # 获取特定区域下的所有 DNS 记录
         dns_records = getCfclient().zones.dns_records.get(zone_id)
-        return dns_records
+        return Resp(HttpCode=200, Data=dns_records)
 
 
 @cfRouter.delete("/deleteZone/{zoneName}", summary="提供zone name，删除zone", description="/deleteZone/{zoneName}",
-                 operation_id="deleteZone")
+                 operation_id="deleteZone", response_model=Resp)
 async def delete_zone(zoneName: str):
     try:
         raw_results = getCfclient().zones.get()
@@ -113,11 +115,11 @@ async def delete_zone(zoneName: str):
         raise HTTPException(status_code=500, detail=str(e))
     else:
         result = getCfclient().zones.delete(zone_id)
-        return result
+        return Resp(HttpCode=200, Data=result)
 
 
 @cfRouter.delete("/deleteZoneRecord/{zoneName}/{recordName}", summary="提供zone name和record name，删除zone解析", description="/deleteZoneRecord/{zoneName}/{recordName}",
-                 operation_id="deleteZoneRecord")
+                 operation_id="deleteZoneRecord", response_model=Resp)
 async def delete_record_zone(zoneName: str, recordName: str):
     # 获取所有区域
     raw_results = getCfclient().zones.get()
@@ -142,4 +144,4 @@ async def delete_record_zone(zoneName: str, recordName: str):
 
     # 删除指定的 DNS 记录
     result = getCfclient().zones.dns_records.delete(zone_id, record_id)
-    return result
+    return Resp(HttpCode=200, Data=result)
