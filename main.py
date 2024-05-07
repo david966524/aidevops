@@ -11,6 +11,7 @@ from services import cf as cfService
 from services import awselb as elbService
 from services import boce as boceService
 from services import route53 as r53
+from services import ec2securitygroups as ec2sg
 
 app = FastAPI()
 
@@ -39,7 +40,7 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 # 依赖函数，检查API密钥
 async def get_api_key(api_key: str = Depends(api_key_header)):
     if api_key != "xxxxxx":
-        raise HTTPException(status_code=403, detail="Invalid API Key")
+        raise HTTPException(status_code=403, detail="Invalid API Key!!!!!!")
     return api_key
 
 
@@ -47,10 +48,9 @@ async def get_api_key(api_key: str = Depends(api_key_header)):
 app.include_router(ec2Service.ec2Router, prefix="/ec2Api", tags=["ec2"], dependencies=[Depends(get_api_key)])
 app.include_router(cfService.cfRouter, prefix="/cfApi", tags=["cloudflare"], dependencies=[Depends(get_api_key)])
 app.include_router(elbService.elbRouter, prefix="/elbApi", tags=["elb"], dependencies=[Depends(get_api_key)])
-app.include_router(boceService.bcRouter, prefix="/boceApi", tags=["boce"])
-app.include_router(r53.r53Router, prefix="/r53", tags=["router53"])
-
-
+app.include_router(boceService.bcRouter, prefix="/boceApi", tags=["boce"], dependencies=[Depends(get_api_key)])
+app.include_router(r53.r53Router, prefix="/r53", tags=["router53"], dependencies=[Depends(get_api_key)])
+app.include_router(ec2sg.ec2sgRouter, prefix="/ec2sg", tags=["ec2securitygroups"], dependencies=[Depends(get_api_key)])
 
 # 跨域处理
 app.add_middleware(
@@ -61,7 +61,6 @@ app.add_middleware(
     allow_headers=["*"],
 
 )
-
 
 # @app.middleware("http")
 # async def m2(request: Request, call_next):
