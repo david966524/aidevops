@@ -1,7 +1,7 @@
 import time
 
 from fastapi import APIRouter
-from services.resp import Resp
+
 from config import settings
 import requests
 
@@ -33,7 +33,7 @@ def getTaskId(domain: str):
     return resp.json()["data"]["id"]
 
 
-@bcRouter.get("/boceInfo/{domain}", response_model=Resp, summary="获取拨测结果", description="传入要拨测的域名",
+@bcRouter.get("/boceInfo/{domain}", summary="获取拨测结果", description="传入要拨测的域名",
                 operation_id="get_boceInfo")
 async def get_boceInfo(domain: str):
     print(getTaskId(domain))
@@ -47,6 +47,6 @@ async def get_boceInfo(domain: str):
         resp = requests.get(url, params=params)
         print(resp.json()["done"])
         if resp.json()["done"] is True:
-            return Resp(HttpCode=200, Data=resp.json()["list"])
+            return resp.json()["list"]
         else:
             continue

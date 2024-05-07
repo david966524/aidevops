@@ -3,7 +3,7 @@ from fastapi import APIRouter
 
 from config import settings
 from services.route53Model import R53Item
-from services.resp import Resp
+
 r53Router = APIRouter()
 
 
@@ -14,18 +14,18 @@ def get_client():
 
 
 @r53Router.get("/getHostedZone", summary="获取route53 中的域名信息", description="get请求",
-               operation_id="getHostedZone", response_model=Resp)
+               operation_id="getHostedZone")
 async def get_hosted_zone():
     response = get_client().list_hosted_zones()
     for zone in response['HostedZones']:
         print('HostedZone ID:', zone['Id'])
         print('HostedZone Name:', zone['Name'])
 
-    return Resp(HttpCode=200, Data=response['HostedZones'])
+    return response['HostedZones']
 
 
 @r53Router.post("/create_record", summary="创建域名解析", description="传入zone_id ，Type， ResourceRecords value",
-                operation_id="create_record", response_model=Resp)
+                operation_id="create_record")
 async def create_record(i: R53Item):
     response = get_client().change_resource_record_sets(
         HostedZoneId=i.zone_id,  # HostedZone的ID
@@ -49,4 +49,4 @@ async def create_record(i: R53Item):
         }
     )
 
-    return Resp(HttpCode=200, Data=response)
+    return response

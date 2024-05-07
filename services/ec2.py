@@ -5,7 +5,7 @@ from dynaconf import Dynaconf
 
 from config import settings
 from services.ec2Model import Ec2Item
-from services.resp import Resp
+
 # settings = Dynaconf(
 #     envvar_prefix="DYNACONF",
 #     settings_files=['settings.toml', 'AiDevOps/.secrets.toml'],
@@ -24,7 +24,7 @@ def get_client(region_name: str):
         raise HTTPException(status_code=500, detail=str(err))
 
 
-@ec2Router.get("/getEc2Info/{region}", summary="获取ec2信息", description="请求路径/region", operation_id="getEc2Info", response_model=Resp)
+@ec2Router.get("/getEc2Info/{region}", summary="获取ec2信息", description="请求路径/region", operation_id="getEc2Info")
 async def get_ec2_info(region: str):
     """
     获取指定区域的EC2实例信息。
@@ -44,11 +44,11 @@ async def get_ec2_info(region: str):
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
     else:
-        return Resp(HttpCode=200, Data=all_instances)
+        return all_instances
 
 
 
-@ec2Router.post("/stopEc2", summary="停止ec2", description="传入region 和 ec2id", operation_id="stopEc2", response_model=Resp)
+@ec2Router.post("/stopEc2", summary="停止ec2", description="传入region 和 ec2id", operation_id="stopEc2")
 async def stop_ec2(ec2Model: Ec2Item):
     try:
         print(ec2Model.region, ec2Model.instance_id)
@@ -57,10 +57,10 @@ async def stop_ec2(ec2Model: Ec2Item):
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
     else:
-        return Resp(HttpCode=200, Data=response)
+        return response
 
 
-@ec2Router.post("/rebootEc2", summary="重启ec2", description="传入region 和 ec2id", operation_id="rebootEc2", response_model=Resp)
+@ec2Router.post("/rebootEc2", summary="重启ec2", description="传入region 和 ec2id", operation_id="rebootEc2")
 async def reboot_ec2(ec2Model: Ec2Item):
     try:
         print(ec2Model.region, ec2Model.instance_id)
@@ -69,10 +69,10 @@ async def reboot_ec2(ec2Model: Ec2Item):
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
     else:
-        return Resp(HttpCode=200, Data=response)
+        return response
 
 
-@ec2Router.post("/terminateEc2", summary="终止ec2", description="传入region 和 ec2id", operation_id="terminateEc2", response_model=Resp)
+@ec2Router.post("/terminateEc2", summary="终止ec2", description="传入region 和 ec2id", operation_id="terminateEc2")
 async def terminate_ec2(ec2Model: Ec2Item):
     try:
         print(ec2Model.region, ec2Model.instance_id)
@@ -81,4 +81,5 @@ async def terminate_ec2(ec2Model: Ec2Item):
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
     else:
-        return Resp(HttpCode=200, Data=response)
+        return response
+
