@@ -12,7 +12,7 @@ from services import awselb as elbService
 from services import boce as boceService
 from services import route53 as r53
 from services import ec2securitygroups as ec2sg
-
+ # pip freeze > requirements.txt
 app = FastAPI()
 
 
